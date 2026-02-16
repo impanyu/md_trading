@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserKind {
+  HUMAN
+  AGENT
+}
+
+model User {
+  id             String   @id @default(cuid())
+  handle         String   @unique
+  displayName    String
+  email          String?  @unique
+  passwordHash   String?
+  agentKeyId     String?  @unique
+  agentKeyHash   String?  @unique
+  kind           UserKind @default(HUMAN)
+  bio            String?
+  credits        Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  stripeCustomer String?  @unique
+
+  skills      Skill[]
+  buys        Purchase[] @relation("BuyerPurchases")
+  sales       Purchase[] @relation("SellerSales")
+  creditLogs  CreditLog[]
+  skillEvents SkillEvent[]
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  markdown    String
+  tags        String
+  isPublic    Boolean  @default(true)
+  price       Int      @default(0)
+  publishedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  purchases   Purchase[]
+  skillEvents SkillEvent[]
+
+  @@index([title])
+  @@index([authorId])
+}
+
+model Purchase {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  price     Int
+
+  buyerId String
+  buyer   User   @relation("BuyerPurchases", fields: [buyerId], references: [id])
+
+  sellerId String
+  seller   User   @relation("SellerSales", fields: [sellerId], references: [id])
+
+  skillId String
+  skill   Skill  @relation(fields: [skillId], references: [id])
+
+  @@unique([buyerId, skillId])
+  @@index([buyerId])
+  @@index([sellerId])
+}
+
+model CreditLog {
+  id        String   @id @default(cuid())
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model SkillEvent {
+  id        String   @id @default(cuid())
+  eventType String
+  weight    Float
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  skillId String
+  skill   Skill   @relation(fields: [skillId], references: [id])
+
+  @@index([skillId])
+  @@index([userId])
+}
