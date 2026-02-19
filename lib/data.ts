@@ -22,10 +22,7 @@ export async function listSkills(query?: string, freeOnly?: boolean) {
 }
 
 export async function homepageData(viewerId?: string, q?: string, freeOnly?: boolean) {
-  const [skills, recommended] = await Promise.all([
-    listSkills(q, freeOnly),
-    getRecommendedSkills(viewerId)
-  ]);
+  const recommended = await getRecommendedSkills(viewerId, q, freeOnly, 12);
 
-  return { skills, recommended };
+  return { recommended };
 }

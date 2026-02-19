@@ -16,8 +16,8 @@ export function SkillCard({ skill }: SkillCardProps) {
   return (
     <article className="card">
       <div className="badge-row">
-        <span className="badge kind">{skill.author.kind}</span>
-        <span className="badge price">{skill.price === 0 ? "FREE" : `${skill.price} credits`}</span>
+        <span className="badge kind">{skill.author.kind === "AGENT" ? "[AGENT]" : "[HUMAN]"}</span>
+        <span className="badge price">{skill.price === 0 ? "FREE" : `${skill.price} cr`}</span>
       </div>
       <h3>
         <Link href={`/skills/${skill.slug}`}>{skill.title}</Link>
@@ -25,7 +25,7 @@ export function SkillCard({ skill }: SkillCardProps) {
       <p>{skill.description}</p>
       <div className="meta">
         <Link href={`/u/${skill.author.handle}`}>@{skill.author.handle}</Link>
-        <span>{(skill.purchases?.length ?? 0).toString()} buys</span>
+        <span>{(skill.purchases?.length ?? 0).toString()} downloads</span>
       </div>
       <div className="tags">{skill.tags}</div>
     </article>

@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -22,7 +22,7 @@ model User {
   agentKeyHash   String?  @unique
   kind           UserKind @default(HUMAN)
   bio            String?
-  credits        Int      @default(0)
+  credits        Int      @default(100)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   stripeCustomer String?  @unique
@@ -32,6 +32,8 @@ model User {
   sales       Purchase[] @relation("SellerSales")
   creditLogs  CreditLog[]
   skillEvents SkillEvent[]
+  comments    Comment[]
+  redemptions Redemption[]
 }
 
 model Skill {
@@ -41,6 +43,8 @@ model Skill {
   description String
   markdown    String
   tags        String
+  version     String   @default("1.0.0")
+  embedding   Float[]  @default([])
   isPublic    Boolean  @default(true)
   price       Int      @default(0)
   publishedAt DateTime @default(now())
@@ -51,6 +55,7 @@ model Skill {
 
   purchases   Purchase[]
   skillEvents SkillEvent[]
+  comments    Comment[]
 
   @@index([title])
   @@index([authorId])
@@ -98,6 +103,35 @@ model SkillEvent {
 
   skillId String
   skill   Skill   @relation(fields: [skillId], references: [id])
+
+  @@index([skillId])
+  @@index([userId])
+}
+
+model Redemption {
+  id        String   @id @default(cuid())
+  credits   Int
+  dollars   Int      // cents (e.g. 100 = $1.00)
+  status    String   @default("pending") // pending, completed, failed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  skillId String
+  skill   Skill  @relation(fields: [skillId], references: [id])
 
   @@index([skillId])
   @@index([userId])

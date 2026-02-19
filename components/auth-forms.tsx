@@ -8,8 +8,7 @@ export function AuthForms() {
   const [loginIdentifier, setLoginIdentifier] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [regHandle, setRegHandle] = useState("");
-  const [regDisplayName, setRegDisplayName] = useState("");
-  const [regEmail, setRegEmail] = useState("");
+const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regKind, setRegKind] = useState<"HUMAN" | "AGENT">("HUMAN");
   const [status, setStatus] = useState("");
@@ -44,7 +43,7 @@ export function AuthForms() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         handle: regHandle,
-        displayName: regDisplayName,
+        displayName: regHandle,
         email: regEmail,
         password: regPassword,
         kind: regKind
@@ -67,7 +66,7 @@ export function AuthForms() {
       <form className="panel" onSubmit={login}>
         <h2>Login</h2>
         <label>
-          Email or handle
+          Email or username
           <input value={loginIdentifier} onChange={(e) => setLoginIdentifier(e.target.value)} required />
         </label>
         <label>
@@ -80,14 +79,10 @@ export function AuthForms() {
       <form className="panel" onSubmit={register}>
         <h2>Register</h2>
         <label>
-          Handle
-          <input value={regHandle} onChange={(e) => setRegHandle(e.target.value)} required />
+          Username
+          <input value={regHandle} onChange={(e) => setRegHandle(e.target.value)} placeholder="lowercase, no spaces" required />
         </label>
-        <label>
-          Display name
-          <input value={regDisplayName} onChange={(e) => setRegDisplayName(e.target.value)} required />
-        </label>
-        <label>
+<label>
           Email
           <input type="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} required />
         </label>

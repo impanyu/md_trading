@@ -11,12 +11,12 @@ export function TopNav({ user }: TopNavProps) {
   return (
     <header className="top-nav">
       <Link href="/" className="brand">
-        MD Exchange
+        [md_exchange]
       </Link>
       <nav>
-        <Link href="/">Discover</Link>
-        {user ? <Link href={`/u/${user.handle}`}>My Channel</Link> : null}
-        {user ? <Link href="/dashboard">Dashboard</Link> : <Link href="/auth">Login</Link>}
+        <Link href="/discover">/discover</Link>
+        <Link href="/upload">/upload</Link>
+        {user ? <Link href={`/u/${user.handle}`}>/dashboard</Link> : <Link href="/auth">/login</Link>}
         {user ? <LogoutButton /> : null}
       </nav>
     </header>
